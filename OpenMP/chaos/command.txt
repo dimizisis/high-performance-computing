@@ -1,0 +1,7 @@
+Parallel:
+
+g++ chaos_parallel.c -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -fopenmp -o chaos_p && chaos_p
+
+Sequential:
+
+g++ chaos_seq.c -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -fopenmp -o chaos && chaos

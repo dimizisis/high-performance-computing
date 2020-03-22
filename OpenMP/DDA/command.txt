@@ -1,0 +1,7 @@
+Parallel:
+
+g++ dda_parallel_midpoint.c -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -fopenmp -o dda_p && dda_p
+
+Sequential:
+
+g++ dda_seq.c -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -o dda && dda
