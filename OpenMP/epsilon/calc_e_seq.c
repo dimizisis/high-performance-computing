@@ -27,14 +27,14 @@ int main(void) {
 double calculate_epsilon(void){
     unsigned long long fact=1;
     double e=2.0, e0;
-    int n=2;
+    int n=2, iterations=1;
 
-        do {
-            ++iterations;
-            e0 = e;
-            fact *= n++;
-            e += 1.0 / fact;
-        } while (fabs(e-e0) >= EPSILON);
+    do {
+        ++iterations;
+        e0 = e;
+        fact *= n++;
+        e += 1.0 / fact;
+    } while (fabs(e-e0) >= EPSILON);
 
     return e;
 }

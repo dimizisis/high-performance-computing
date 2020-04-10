@@ -50,7 +50,7 @@ int main (int argc, char *argv[]) {
 
 	display_count(freq, N);	
 
-	(void) printf("Time spent for counting: %g", (double)(end-start));
+	(void) printf("Time spent for counting: %g", (double)(end-start) / CLOCKS_PER_SEC);
 
 	fclose (pFile);
 	free (buffer);

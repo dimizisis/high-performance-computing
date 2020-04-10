@@ -27,7 +27,7 @@ int main(void) {
 double calculate_epsilon(void){
     unsigned long long fact=1;
     double e=2.0, e0;
-    int n=2;
+    int n=2, iterations=1;
 
     #pragma omp parallel default(shared) private(e0) reduction(+:e)
     {
