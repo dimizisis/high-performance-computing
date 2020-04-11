@@ -109,7 +109,7 @@ void rand_init_array(int array[], int n, int upper, int lower){
 
 void attatch_results(int buff[], int results[], int* locations, int n){
     int i;
-    for(i=0; i<N; i++)
+    for(i=0; i<n; i++)
         results[locations[i]] = buff[i];
 }
 
