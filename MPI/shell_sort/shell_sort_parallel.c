@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "mpi.h"
@@ -41,7 +40,7 @@ int main (int argc, char *argv[]) {
     }
     
     /* Each thread will have different local_locations vector */
-    int* local_array = (int*)calloc(sendcounts[rank], sizeof(int));
+    int* local_array = (int*)malloc(sendcounts[rank]*sizeof(int));
     if (local_array == NULL) {printf ("Memory error\n"); MPI_Finalize(); return 4;}
 
     MPI_Scatterv(array, sendcounts, displs, MPI_INT, local_array, sendcounts[rank], MPI_INT, ROOT, MPI_COMM_WORLD);
@@ -56,7 +55,7 @@ int main (int argc, char *argv[]) {
     else {  /* if process is not the root */
   
         int received_count = calculate_count(rank, sendcounts, 1);
-        int* recv_array = (int*)calloc(received_count, sizeof(int));
+        int* recv_array = (int*)malloc(received_count*sizeof(int));
         if (recv_array == NULL) {printf ("Memory error\n"); MPI_Finalize(); return 4;}
         
         /* Receive array from previous process */
@@ -87,9 +86,9 @@ int main (int argc, char *argv[]) {
 
         MPI_Recv(results, N, MPI_INT, size-1, TAG, MPI_COMM_WORLD, &status);
         end = MPI_Wtime();
-        (void) printf("Time elapsed: %g\n", (end-begin));
         // (void) printf("Sorted Array: ");
         // display_array(results, N);
+        (void) printf("Time elapsed: %g\n", (end-begin));
     }
 
     MPI_Finalize();
