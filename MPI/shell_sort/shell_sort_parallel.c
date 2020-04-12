@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "mpi.h"
@@ -70,13 +71,9 @@ int main (int argc, char *argv[]) {
         /* Sort merged array */
         shell_sort(merged_array, send_count);
 
-        if (rank < size - 1)
-            /* Send the merged array to the next process */
-            MPI_Send(merged_array, send_count, MPI_INT, rank+1, TAG, MPI_COMM_WORLD);
+        /* Send the merged array to the next process (when last is last process turn, will send array to root because of modulo) */
+        MPI_Send(merged_array, send_count, MPI_INT, (rank+1)%size, TAG, MPI_COMM_WORLD);
 
-        else if (rank == size - 1)  
-            /* if process is the last, send the merged_array (final sorted array) to root (Process 0) */
-            MPI_Send(merged_array, send_count, MPI_INT, ROOT, TAG, MPI_COMM_WORLD);
     }
 
     /* Receive & print results */
