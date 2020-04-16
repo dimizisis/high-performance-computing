@@ -34,8 +34,8 @@ int main (int argc, char *argv[]) {
 
     if (rank == ROOT){
         rand_init_array(array, N, 0, N*4);
-        // (void) printf("Initial array: ");
-        // display_array(array, N);
+        (void) printf("Initial array: ");
+        display_array(array, N);
         begin = MPI_Wtime();
     }
     
@@ -67,9 +67,6 @@ int main (int argc, char *argv[]) {
         /* Merge your array with the received one (merged_array)*/
         int* merged_array = merge(local_array, sendcounts[rank], recv_array, received_count);
 
-        /* Sort merged array */
-        shell_sort(merged_array, send_count);
-
         /* Send the merged array to the next process (when last is last process turn, will send array to root because of modulo) */
         MPI_Send(merged_array, send_count, MPI_INT, (rank+1)%size, TAG, MPI_COMM_WORLD);
 
@@ -82,8 +79,8 @@ int main (int argc, char *argv[]) {
 
         MPI_Recv(results, N, MPI_INT, size-1, TAG, MPI_COMM_WORLD, &status);
         end = MPI_Wtime();
-        // (void) printf("Sorted Array: ");
-        // display_array(results, N);
+        (void) printf("Sorted Array: ");
+        display_array(results, N);
         (void) printf("Time elapsed: %g\n", (end-begin));
     }
 

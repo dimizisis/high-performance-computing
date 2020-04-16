@@ -5,7 +5,6 @@
 #define N 128
 #define base 0
 
-void zeros(int array[], int n);
 void count_characters(int freq[], char buffer[], long file_size);
 void display_count(int freq[], int n);
 
@@ -31,7 +30,7 @@ int main (int argc, char *argv[]) {
 	pFile = fopen ( filename , "rb" );
 	if (pFile==NULL) {printf ("File error\n"); return 2;}
 
-	// obtain file size:
+	/* obtain file size	*/
 	fseek (pFile, 0, SEEK_END);
 	file_size = ftell(pFile);
 	rewind (pFile);
@@ -49,17 +48,22 @@ int main (int argc, char *argv[]) {
 
     int local_file_size = stop - start;
 	
-	// allocate memory to contain the file:
+	/* allocate memory to contain the file	*/
 	buffer = (char*) malloc (sizeof(char)*local_file_size);
 	if (buffer == NULL) {printf ("Memory error\n"); return 3;}
 
-	// seek from the beggining of start
+	/* seek from the beggining of start	*/
 	fseek(pFile, start, SEEK_SET);	
 
+	/* read from local buffer */
+	fread(buffer, 1, local_file_size, pFile);
+
+	/* count chars */
 	count_characters(freq, buffer, local_file_size);
 
 	if (!rank) end = MPI_Wtime();
 
+	/* make the reduce */
     MPI_Reduce(freq, total_freq, N, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
 	if (!rank){
