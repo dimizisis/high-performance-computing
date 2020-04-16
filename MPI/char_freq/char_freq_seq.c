@@ -26,17 +26,17 @@ int main (int argc, char *argv[]) {
 	pFile = fopen ( filename , "rb" );
 	if (pFile==NULL) {printf ("File error\n"); return 2;}
 
-	// obtain file size:
+	/* obtain file size */
 	fseek (pFile , 0 , SEEK_END);
 	file_size = ftell (pFile);
 	rewind (pFile);
 	printf("file size is %ld\n", file_size);
 	
-	// allocate memory to contain the file:
+	/* allocate memory to contain the file	*/
 	buffer = (char*) malloc (sizeof(char)*file_size);
 	if (buffer == NULL) {printf ("Memory error\n"); return 3;}
 
-	// copy the file into the buffer:
+	/* copy the file into the buffer */
 	result = fread (buffer,1,file_size,pFile);
 	if (result != file_size) {printf ("Reading error\n"); return 4;} 
 
