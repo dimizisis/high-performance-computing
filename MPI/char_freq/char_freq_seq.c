@@ -18,10 +18,10 @@ int main (int argc, char *argv[]) {
 	int freq[N];
 	clock_t start, end;
 
-    if (argc != 2) {
+    	if (argc != 2) {
 		printf ("Usage : %s <file_name>\n", argv[0]);
 		return 1;
-    }
+    	}
 	filename = argv[1];
 	pFile = fopen ( filename , "rb" );
 	if (pFile==NULL) {printf ("File error\n"); return 2;}
@@ -42,7 +42,7 @@ int main (int argc, char *argv[]) {
 
 	zeros(freq, N);
 
-    start = clock();
+    	start = clock();
 
 	count_characters(freq, buffer, file_size);
 
