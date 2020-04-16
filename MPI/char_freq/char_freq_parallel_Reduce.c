@@ -14,7 +14,7 @@ int main (int argc, char *argv[]) {
 	long file_size;
 	char * buffer;
 	char * filename;
-    int size, rank;
+	int size, rank;
 	int total_freq[N] = {0};
 	double begin, end;
 
