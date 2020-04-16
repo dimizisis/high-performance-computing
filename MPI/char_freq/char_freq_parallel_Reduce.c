@@ -5,6 +5,7 @@
 #define N 128
 #define base 0
 
+void zeros(int array[], int n);
 void count_characters(int freq[], char buffer[], long file_size);
 void display_count(int freq[], int n);
 
@@ -14,7 +15,7 @@ int main (int argc, char *argv[]) {
 	long file_size;
 	char * buffer;
 	char * filename;
-	int size, rank;
+    int size, rank;
 	int total_freq[N] = {0};
 	double begin, end;
 
