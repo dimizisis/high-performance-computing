@@ -60,21 +60,21 @@ int main (int argc, char *argv[]){
     buffer = (char*) malloc (sizeof(char)*local_file_size);
     if (buffer == NULL) {printf ("Memory error\n"); return 3;}
 
-    /* seek from the beggining of start	*/
+    /* Seek from the beggining of start	*/
     fseek(pFile, start, SEEK_SET);	
 
-    /* read from local buffer */
+    /* Read from local buffer */
     fread(buffer, 1, local_file_size, pFile);
 
-    /* count chars */
+    /* Count chars */
     count_characters(freq, buffer, local_file_size);
 
     if (rank == ROOT) end = MPI_Wtime();
 
-    /* make the reduce */
+    /* Make the reduce */
     MPI_Reduce(freq, total_freq, N, MPI_INT, MPI_SUM, ROOT, MPI_COMM_WORLD);
 
-	/* Printing */
+    /* Printing */
     if (rank == ROOT){
 	    display_count(total_freq, N);	
 	    (void) printf("Time spent for counting: %g\n", (double)(end-begin));
