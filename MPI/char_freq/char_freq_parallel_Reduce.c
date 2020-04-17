@@ -52,7 +52,7 @@ int main (int argc, char *argv[]){
     if (freq == NULL) {printf ("Memory error\n"); return 3;}
     int chunk = file_size / size;
     int extra = file_size % size;
-   	int start = rank * chunk;
+    int start = rank * chunk;
     int stop = start + chunk;
     if (rank == size - 1) stop += extra;
 
