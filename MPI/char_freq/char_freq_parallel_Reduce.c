@@ -2,11 +2,14 @@
 #include <stdlib.h> 
 #include "mpi.h"
 
+#define NUM_OF_ARGS 2
 #define ROOT 0
 #define N 128
 #define base 0
 
-void zeros(int array[], int n);
+int check_args(int argc);
+FILE* open_file(char* filename);
+long obtain_file_size(FILE* pFile);
 void count_characters(int freq[], char buffer[], long file_size);
 void display_count(int freq[], int n);
 
@@ -24,26 +27,21 @@ int main (int argc, char *argv[]){
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    if (argc != 2) {
-	printf("Usage : %s <file_name>\n", argv[0]);
-	return 1;
-    }
+    /* Check if the right number of arguments give */
+    (void) check_args(argc);
+
+    /* Open file with given filename (argv) */
+    pFile = open_file(argv[1]);
 
     /* allocate memory to contain the file	*/
     total_freq = (int*) calloc(sizeof(int), N);
     if (total_freq == NULL) {printf ("Memory error\n"); return 3;}
 
-    filename = argv[1];
-    pFile = fopen (filename , "rb");
-    if (pFile==NULL) {printf ("File error\n"); return 2;}
-
-    /* obtain file size	*/
-    fseek (pFile, 0, SEEK_END);
-    file_size = ftell(pFile);
-    rewind (pFile);
+    /* Get file size */
+    file_size = obtain_file_size(pFile);
 
     if (rank == ROOT){
-    	printf("file size is %ld\n", file_size);
+    	(void) printf("File size is %ld\n", file_size);
     	begin = MPI_Wtime();
     }
 
@@ -76,9 +74,10 @@ int main (int argc, char *argv[]){
     /* make the reduce */
     MPI_Reduce(freq, total_freq, N, MPI_INT, MPI_SUM, ROOT, MPI_COMM_WORLD);
 
+	/* Printing */
     if (rank == ROOT){
-	display_count(total_freq, N);	
-	(void) printf("Time spent for counting: %g\n", (double)(end-begin));
+	    display_count(total_freq, N);	
+	    (void) printf("Time spent for counting: %g\n", (double)(end-begin));
     }
 
     fclose(pFile);
@@ -87,6 +86,55 @@ int main (int argc, char *argv[]){
     MPI_Finalize();
 
     return 0;
+}
+
+/*
+ * Function:  check_args 
+ * --------------------
+ * Checks if the correct number of arguments is given
+ *
+ *  argc: number of arguments given by the user
+ *
+ */
+
+int check_args(int argc){
+    if (argc != NUM_OF_ARGS) {
+        printf("%d arguments must be given\n", argc);
+        exit(1);
+    }
+    return 1;
+}
+
+/*
+ * Function:  open_file 
+ * --------------------
+ * Opens file, given the filename (argv)
+ *
+ *  filename: filename user gave as argument
+ *
+ */
+
+FILE* open_file(char* filename){
+    FILE* pFile = fopen(filename, "rb");
+    if (pFile==NULL) {printf ("File error\n"); exit(2);}
+    return pFile;
+}
+
+/*
+ * Function:  obtain_file_size 
+ * --------------------
+ * Gets total file size using fseek, ftell functions
+ *
+ *  pFile: pointer to the file we opened
+ *
+ */
+
+long obtain_file_size(FILE* pFile){
+    fseek (pFile, 0, SEEK_END);
+    long file_size = ftell(pFile);
+    rewind(pFile);
+
+    return file_size;
 }
 
 /*
