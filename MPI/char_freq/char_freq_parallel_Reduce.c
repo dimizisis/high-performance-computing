@@ -15,11 +15,11 @@ int main (int argc, char *argv[]) {
 	long file_size;
 	char * buffer;
 	char * filename;
-    int size, rank;
+	int size, rank;
 	int total_freq[N] = {0};
 	double begin, end;
 
-    MPI_Init(&argc,&argv);
+	MPI_Init(&argc,&argv);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
