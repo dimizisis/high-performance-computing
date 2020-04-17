@@ -19,14 +19,20 @@ int main (int argc, char *argv[]) {
 	int total_freq[N] = {0};
 	double begin, end;
 
+<<<<<<< HEAD
 	MPI_Init(&argc,&argv);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+=======
+ 	MPI_Init(&argc,&argv);
+   	MPI_Comm_size(MPI_COMM_WORLD, &size);
+    	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+>>>>>>> master
 
-    if (argc != 2) {
+    	if (argc != 2) {
 		printf ("Usage : %s <file_name>\n", argv[0]);
 		return 1;
-    }
+    	}
 	filename = argv[1];
 	pFile = fopen ( filename , "rb" );
 	if (pFile==NULL) {printf ("File error\n"); return 2;}
@@ -40,14 +46,14 @@ int main (int argc, char *argv[]) {
 	if (!rank) begin = MPI_Wtime();
 
 	/* These initialization will be done by all processes   */
-    int freq[N] = {0};
-    int chunk = file_size / size;
-    int extra = file_size % size;
-    int start = rank * chunk;
-    int stop = start + chunk;
-    if (rank == size - 1) stop += extra;
+    	int freq[N] = {0};
+    	int chunk = file_size / size;
+    	int extra = file_size % size;
+   	int start = rank * chunk;
+    	int stop = start + chunk;
+    	if (rank == size - 1) stop += extra;
 
-    int local_file_size = stop - start;
+    	int local_file_size = stop - start;
 	
 	/* allocate memory to contain the file	*/
 	buffer = (char*) malloc (sizeof(char)*local_file_size);
@@ -65,7 +71,7 @@ int main (int argc, char *argv[]) {
 	if (!rank) end = MPI_Wtime();
 
 	/* make the reduce */
-    MPI_Reduce(freq, total_freq, N, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+    	MPI_Reduce(freq, total_freq, N, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
 	if (!rank){
 		display_count(total_freq, N);	
