@@ -12,44 +12,44 @@ void display_count(int freq[], int n);
 
 int main (int argc, char *argv[]){
 	
-	FILE *pFile;
-	long file_size;
-	char * buffer;
-	char * filename;
-	int size, rank;
-	int* total_freq;
-	double begin, end;
+    FILE *pFile;
+    long file_size;
+    char * buffer;
+    char * filename;
+    int size, rank;
+    int* total_freq;
+    double begin, end;
 
-	MPI_Init(&argc,&argv);
+    MPI_Init(&argc,&argv);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
     if (argc != 2) {
-		printf("Usage : %s <file_name>\n", argv[0]);
-		return 1;
+	printf("Usage : %s <file_name>\n", argv[0]);
+	return 1;
     }
 
-	/* allocate memory to contain the file	*/
-	total_freq = (int*) calloc(sizeof(int), N);
-	if (total_freq == NULL) {printf ("Memory error\n"); return 3;}
+    /* allocate memory to contain the file	*/
+    total_freq = (int*) calloc(sizeof(int), N);
+    if (total_freq == NULL) {printf ("Memory error\n"); return 3;}
 
-	filename = argv[1];
-	pFile = fopen (filename , "rb");
-	if (pFile==NULL) {printf ("File error\n"); return 2;}
+    filename = argv[1];
+    pFile = fopen (filename , "rb");
+    if (pFile==NULL) {printf ("File error\n"); return 2;}
 
-	/* obtain file size	*/
-	fseek (pFile, 0, SEEK_END);
-	file_size = ftell(pFile);
-	rewind (pFile);
+    /* obtain file size	*/
+    fseek (pFile, 0, SEEK_END);
+    file_size = ftell(pFile);
+    rewind (pFile);
 
-	if (rank == ROOT){
-		printf("file size is %ld\n", file_size);
-		begin = MPI_Wtime();
-	}
+    if (rank == ROOT){
+    	printf("file size is %ld\n", file_size);
+    	begin = MPI_Wtime();
+    }
 
-	/* These initialization will be done by all processes   */
-	int* freq = (int*) calloc(sizeof(int), N);
-	if (freq == NULL) {printf ("Memory error\n"); return 3;}
+    /* These initialization will be done by all processes   */
+    int* freq = (int*) calloc(sizeof(int), N);
+    if (freq == NULL) {printf ("Memory error\n"); return 3;}
     int chunk = file_size / size;
     int extra = file_size % size;
    	int start = rank * chunk;
@@ -58,35 +58,35 @@ int main (int argc, char *argv[]){
 
     int local_file_size = stop - start;
 	
-	/* allocate memory to contain the file	*/
-	buffer = (char*) malloc (sizeof(char)*local_file_size);
-	if (buffer == NULL) {printf ("Memory error\n"); return 3;}
+    /* allocate memory to contain the file	*/
+    buffer = (char*) malloc (sizeof(char)*local_file_size);
+    if (buffer == NULL) {printf ("Memory error\n"); return 3;}
 
-	/* seek from the beggining of start	*/
-	fseek(pFile, start, SEEK_SET);	
+    /* seek from the beggining of start	*/
+    fseek(pFile, start, SEEK_SET);	
 
-	/* read from local buffer */
-	fread(buffer, 1, local_file_size, pFile);
+    /* read from local buffer */
+    fread(buffer, 1, local_file_size, pFile);
 
-	/* count chars */
-	count_characters(freq, buffer, local_file_size);
+    /* count chars */
+    count_characters(freq, buffer, local_file_size);
 
-	if (rank == ROOT) end = MPI_Wtime();
+    if (rank == ROOT) end = MPI_Wtime();
 
-	/* make the reduce */
-    	MPI_Reduce(freq, total_freq, N, MPI_INT, MPI_SUM, ROOT, MPI_COMM_WORLD);
+    /* make the reduce */
+    MPI_Reduce(freq, total_freq, N, MPI_INT, MPI_SUM, ROOT, MPI_COMM_WORLD);
 
-	if (rank == ROOT){
-		display_count(total_freq, N);	
-		(void) printf("Time spent for counting: %g\n", (double)(end-begin));
-	}
+    if (rank == ROOT){
+	display_count(total_freq, N);	
+	(void) printf("Time spent for counting: %g\n", (double)(end-begin));
+    }
 
-	fclose(pFile);
-	free(buffer);
+    fclose(pFile);
+    free(buffer);
 
-	MPI_Finalize();
+    MPI_Finalize();
 
-	return 0;
+    return 0;
 }
 
 /*
@@ -101,9 +101,9 @@ int main (int argc, char *argv[]){
  */
 
 void count_characters(int freq[], char buffer[], long file_size){
-	int i;
-	for (i=0; i<file_size; ++i)
-		++freq[buffer[i] - base];
+     int i;
+     for (i=0; i<file_size; ++i)
+	++freq[buffer[i] - base];
 }
 
 /*
@@ -117,7 +117,7 @@ void count_characters(int freq[], char buffer[], long file_size){
  */
 
 void display_count(int freq[], int n){
-	int j;
-	for (j=0; j<n; ++j)
-		(void) printf("%d = %d\n", j+base, freq[j]);
+     int j;
+     for (j=0; j<n; ++j)
+	(void) printf("%d = %d\n", j+base, freq[j]);
 }
