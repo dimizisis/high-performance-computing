@@ -16,8 +16,8 @@ int main(int argc, char *argv[]){
     double begin, end;
 
     MPI_Init(&argc, &argv);
-	MPI_Comm_size(MPI_COMM_WORLD, &size);
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
     array = (int*)calloc(sizeof(int), N+1);
     if (array == NULL) {(void) printf ("Memory error\n"); MPI_Finalize(); return 4;}
