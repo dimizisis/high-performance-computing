@@ -76,8 +76,8 @@ int main (int argc, char *argv[]){
 
     /* Printing */
     if (rank == ROOT){
-	    display_count(total_freq, N);	
-	    (void) printf("Time spent for counting: %g\n", (double)(end-begin));
+        display_count(total_freq, N);	
+	(void) printf("Time spent for counting: %g\n", (double)(end-begin));
     }
 
     fclose(pFile);
