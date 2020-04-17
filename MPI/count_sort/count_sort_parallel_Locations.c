@@ -3,6 +3,7 @@
 #include <string.h>
 #include "mpi.h"
 
+#define ROOT 0
 #define N 8
 #define UPPER N*4
 #define LOWER 1
@@ -24,7 +25,7 @@ int main(int argc, char *argv[]){
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    if (!rank) {
+    if (rank == ROOT) {
         rand_init_array(init_array, N, UPPER, LOWER);
         (void) printf("Initial array: ");
         display_array(init_array, N);
@@ -35,7 +36,7 @@ int main(int argc, char *argv[]){
 
     }
     
-    if (!rank) begin = MPI_Wtime(); /*  if rank is 0, start counting    */
+    if (rank == ROOT) begin = MPI_Wtime(); /*  if rank is 0, start counting    */
 
     /* These initialization will be done by all processes   */
     int chunk = N / size;
@@ -46,17 +47,17 @@ int main(int argc, char *argv[]){
     int* local_locations = (int*)malloc(sizeof(int)*(stop-start));
     if (local_locations == NULL) {printf ("Memory error\n"); MPI_Finalize(); return 4;}
 
-    MPI_Bcast(init_array, N, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(init_array, N, MPI_INT, ROOT, MPI_COMM_WORLD);
 
     count_sort(init_array, N, start, stop, local_locations);
 
-    if(!rank) {
+    if(rank == ROOT) {
         
         /* locations (global) will be the receive buffer, containing the right position of each element */
         locations = (int*)malloc(sizeof(int)*N);
         if (locations == NULL) {printf ("Memory error\n"); MPI_Finalize(); return 6;}
         
-        MPI_Gather(local_locations, (stop-start), MPI_INT, locations, (stop-start), MPI_INT, 0, MPI_COMM_WORLD);
+        MPI_Gather(local_locations, (stop-start), MPI_INT, locations, (stop-start), MPI_INT, ROOT, MPI_COMM_WORLD);
 
         attatch_results(init_array, sorted_array, locations, N);
 
@@ -69,7 +70,7 @@ int main(int argc, char *argv[]){
        free(locations);
     }
     else
-        MPI_Gather(local_locations, (stop-start), MPI_INT, locations, (stop-start), MPI_INT, 0, MPI_COMM_WORLD);
+        MPI_Gather(local_locations, (stop-start), MPI_INT, locations, (stop-start), MPI_INT, ROOT, MPI_COMM_WORLD);
 
     MPI_Finalize();
 

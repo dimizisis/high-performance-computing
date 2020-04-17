@@ -3,6 +3,7 @@
 #include <string.h>
 #include "mpi.h"
 
+#define ROOT 0
 #define N 8
 #define UPPER N*4
 #define LOWER 1
@@ -22,16 +23,16 @@ int main(int argc, char *argv[]){
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    if (!rank) {
+    if (rank == ROOT) {
         rand_init_array(init_array, N, UPPER, LOWER);
         (void) printf("Initial array: ");
         display_array(init_array, N);
         (void) printf("Sorting began...\n\n");
     }
 
-    MPI_Bcast(init_array, N, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(init_array, N, MPI_INT, ROOT, MPI_COMM_WORLD);
 
-    if (!rank) begin = MPI_Wtime(); /*  if rank is 0, start counting    */
+    if (rank == ROOT) begin = MPI_Wtime(); /*  if rank is 0, start counting    */
 
     /* These initialization will be done by all processes   */
     int chunk = N / size;
@@ -43,9 +44,9 @@ int main(int argc, char *argv[]){
     
     count_sort(init_array, N, start, stop);
 
-    MPI_Reduce(init_array, sorted_array, N, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+    MPI_Reduce(init_array, sorted_array, N, MPI_INT, MPI_SUM, ROOT, MPI_COMM_WORLD);
 
-    if (!rank){
+    if (rank == ROOT){
         end = MPI_Wtime();
         (void) printf("\nSorted array: ");
         display_array(sorted_array, N);

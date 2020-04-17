@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "mpi.h"
 
+#define ROOT 0
 #define tag 100  /* tag used in MPI_Send */
 
 void rand_init_array(int array[], int n);
@@ -20,7 +21,7 @@ int main(int argc, char *argv[]){
     MPI_Comm_size(MPI_COMM_WORLD,&size);
     MPI_Comm_rank(MPI_COMM_WORLD,&rank);
     
-    if(!rank){
+    if(rank == ROOT){
             rand_init_array(init_array, size);  /* Process 0: Initialize array */
             (void) printf("Initial array: ");
             display_array(init_array, size);
@@ -85,7 +86,7 @@ void insertion_sort(int array[], int n, int rank, int* smaller, int* received){
 void fetch_results(int sorted_array[], int n, int rank, int* smaller){
     MPI_Status status;
     int i;
-    if(!rank){  /* if is process 0 */
+    if(rank == ROOT){  /* if is process 0 */
         sorted_array[0] = *smaller;
         for(i=1; i<n; ++i)
             MPI_Recv(&sorted_array[i], 1, MPI_INT, i, tag, MPI_COMM_WORLD, &status);
@@ -93,7 +94,7 @@ void fetch_results(int sorted_array[], int n, int rank, int* smaller){
         display_array(sorted_array, n);
    }
    else
-        MPI_Send(smaller, 1, MPI_INT, 0, tag, MPI_COMM_WORLD); /* send the smaller element to process 0 */
+        MPI_Send(smaller, 1, MPI_INT, ROOT, tag, MPI_COMM_WORLD); /* send the smaller element to process 0 */
 }
 
 /*
