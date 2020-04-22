@@ -8,26 +8,6 @@ N = 10
 LOWER = 0
 UPPER = N*2
 
-def calculate_displacements(sendcounts):
-    '''
-    Function:  calculate_displacements 
-    --------------------
-    Calculates displacements (for MPI_Scatterv) and puts them on an array
-    
-    sendcounts: pointer of the array which contains the size of all local arrays of each process (size of the array is the number of processes)
-    '''
-    return np.insert(np.cumsum(sendcounts), 0, 0)[0:-1]
-
-def calculate_sendcounts(split):
-    '''
-    Function:  calculate_sendcounts 
-    --------------------
-    Calculates sendcounts (how many elements we're going to send to each process, for MPI_Scatterv) and puts them on an array
- 
-    split: pointer of the array which contains the split of initial array (split is done using numpy's split)
-    '''
-    return [len(split[i]) for i in range(len(split))]
-
 def merge(x, n1, y, n2):
     '''
     Function:  merge 
@@ -86,12 +66,6 @@ def shell_sort(array, n):
                 j -= h
             array[j] = t
         h = int(h/2)
-    
-def calculate_count(sendcounts, rank):
-    sum = 0
-    for i in range(rank+1):
-        sum += sendcounts[i]
-    return sum
 
 if __name__ == '__main__':
 
