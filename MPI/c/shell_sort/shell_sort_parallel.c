@@ -120,9 +120,9 @@ void calculate_displacements(int* displacements, int* sendcounts, int size){
  */
 
 void calculate_sendcounts(int* sendcounts, int size, int n){
-    int i, extra = N % size;
+    int i, extra = n % size;
     for (i=0; i < size; ++i) {
-        sendcounts[i] = N/size;
+        sendcounts[i] = n/size;
         if (extra > 0) {
             ++sendcounts[i];
             --extra;
