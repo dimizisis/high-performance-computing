@@ -102,7 +102,7 @@ if __name__ == '__main__':
 
     local_file_size = stop - start
 
-	# copy the file into the buffer
+    # copy the file into the buffer
     buffer = f.read(local_file_size)
 
     # seek from the beggining of start
