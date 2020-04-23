@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     # These initialization will be done by all processes
     chunk = int(N / size)
-    extra = int(N % size)
+    extra = N % size
     start = (rank * chunk)+1
     stop = start + chunk
     if rank == size - 1: stop += extra
