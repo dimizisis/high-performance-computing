@@ -17,7 +17,7 @@ def fetch_results(sorted_array, n, rank, smaller, comm):
     smaller: array's smallest element
     '''
     status = MPI.Status()
-    if(rank == ROOT):  # if is process 0
+    if rank == ROOT:  # if is process 0
         sorted_array[0] = smaller
         for i in range (1, n):
             sorted_array[i] = comm.recv(source=i, tag=TAG, status=status)
