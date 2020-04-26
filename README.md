@@ -37,6 +37,10 @@ g++ dda_parallel_midpoint.c -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -
 ./dda_p
 ```
 
+##### Screenshot
+
+![alt text](https://i.imgur.com/lbx36hV.png "dda")
+
 ### Chaos
 
 Used omp parallel for in draw triangle's for loop. Parallel point drawing. See more about [Chaos Game](https://en.wikipedia.org/wiki/Chaos_game)
@@ -64,6 +68,10 @@ g++ chaos_parallel.c -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -fopenmp
 ```
 ./chaos_p
 ```
+
+##### Screenshot
+
+![alt text](https://i.imgur.com/63IPbCN.png "chaos_game")
 
 ### char_freq
 
