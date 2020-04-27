@@ -2,6 +2,32 @@
 
 University projects using OpenMP, MPI (C & Python), Cuda
 
+## Table of Contents
+<!--ts-->
+   * [General Requirements](#general-requirements)
+   * [OpenMP](#openmp)
+      * [DDA](#dda)
+      * [Chaos](#chaos)
+      * [Character Frequency](#char_freq)
+      * [Count Sort (Enumeration Sort)](#count_sort)
+      * [Insertion Sort](#insertion_sort)
+      * [Epsilon](#epsilon)
+      * [Pi](#pi)
+   * [MPI (C-Lang)](#mpi)
+     * [Character Frequency](#char_freq-mpi)
+      * [Count Sort (Enumeration Sort)](#count_sort-mpi)
+      * [Insertion Sort](#insertion_sort-mpi)
+      * [Shell Sort](#insertion_sort)
+      * [Sieve of Eratosthenes](#sieve)
+   * [Python (mpi4py)](#mpi4py)
+     * [Character Frequency](#char_freq-mpi4py)
+     * [Count Sort (Enumeration Sort)](#count_sort-mpi4py)
+     * [Insertion Sort](#insertion_sort-mpi4py)
+     * [Shell Sort](#insertion_sort-mpi4py)
+     * [Sieve of Eratosthenes](#sieve)
+
+<!--te-->
+
 ## General Requirements
 
 * gcc & g++ compilers
