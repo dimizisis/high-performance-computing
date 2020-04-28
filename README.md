@@ -154,11 +154,11 @@ Parallelized insertion sort algorithm (enumeration sort), using omp parallel and
 #### Usage
 
 ```
-gcc -fopenmp count_sort_parallel.c -o cs_p
+gcc -fopenmp insertion_sort_parallel.c -o is_p
 ```
 
 ```
-./cs_p
+./is_p
 ```
 
 #### Execution Time
