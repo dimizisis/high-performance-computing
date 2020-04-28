@@ -125,7 +125,7 @@ gcc -fopenmp char_freq_parallel_<method>.c -o char_freq_p
 #### Execution Time
 
 Using as input the bible.txt file.
-![alt text](https://i.imgur.com/48LEaZX.png "char_freq")
+![alt text](https://i.imgur.com/ePObqe9.png "char_freq")
 
 ### count_sort
 
@@ -145,5 +145,5 @@ gcc -fopenmp count_sort_parallel.c -o cs_p
 
 Tested both with random array, size 90000.
 
-![alt text](https://i.imgur.com/pufEHoC.png "count_sort")
+![alt text](https://i.imgur.com/f1UNxsI.png "count_sort")
 
