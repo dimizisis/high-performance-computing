@@ -147,3 +147,24 @@ Tested both with random array, size 90000.
 
 ![alt text](https://i.imgur.com/f1UNxsI.png "count_sort")
 
+### insertion_sort
+
+Parallelized insertion sort algorithm (enumeration sort), using omp parallel and critical block (lock). Change the N macro inside the code.
+
+#### Usage
+
+```
+gcc -fopenmp count_sort_parallel.c -o cs_p
+```
+
+```
+./cs_p
+```
+
+#### Execution Time
+
+Tested both with random array, size 500000.
+
+![alt text](https://i.imgur.com/I0vMMFg.png "insertion_sort")
+
+As you can see, no real difference in time. This is most likely due to critical block, each thread waits every time to get the lock.
