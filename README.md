@@ -19,7 +19,7 @@ University projects using OpenMP, MPI (C & Python), Cuda
       * [Insertion Sort](#insertion_sort-mpi)
       * [Shell Sort](#insertion_sort)
       * [Sieve of Eratosthenes](#sieve)
-   * [Python (mpi4py)](#mpi4py)
+   * [mpi4py (Python)](#mpi4py)
      * [Character Frequency](#char_freq-mpi4py)
      * [Count Sort (Enumeration Sort)](#count_sort-mpi4py)
      * [Insertion Sort](#insertion_sort-mpi4py)
