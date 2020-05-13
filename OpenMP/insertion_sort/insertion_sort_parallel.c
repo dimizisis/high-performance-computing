@@ -2,7 +2,7 @@
 #include <omp.h>
 #include <stdlib.h> 
 
-#define N 100000
+#define N 500000
 
 void insertion_sort (int a[], int n);
 void rand_init_array(int array[], int n, int upper, int lower);

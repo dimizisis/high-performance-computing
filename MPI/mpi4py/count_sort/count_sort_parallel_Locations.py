@@ -49,7 +49,6 @@ if __name__ == '__main__':
     locations = None
     sorted_a = None
     a = np.empty(dtype=int, shape=N)
-    # locations = np.empty(dtype=int, shape=N)
     if rank == ROOT:
         a = np.random.randint(low=LOWER, high=UPPER, size=N)
         print(f'Initial Array: {a}')
