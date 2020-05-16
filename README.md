@@ -14,7 +14,7 @@ University projects using OpenMP, MPI (C & Python), Cuda
       * [Epsilon](#epsilon)
       * [Pi](#pi)
    * [MPI (C-Lang)](#mpi)
-     * [Character Frequency](#char_freq-mpi)
+      * [Character Frequency](#char_freq-mpi)
       * [Count Sort (Enumeration Sort)](#count_sort-mpi)
       * [Insertion Sort](#insertion_sort-mpi)
       * [Shell Sort](#insertion_sort)
@@ -237,7 +237,7 @@ epsilon_parallel
 
 As you can see, no real difference in time. Sequential calculaton is even faster.
 
-### Pi
+### pi
 
 #### pi_parallel_array
 
@@ -345,3 +345,4 @@ pi_parallel_reduction
 
 As we can observe, reduction works better compared to other methods (pi_parallel_local is reduction, pi_parallel_reduction uses OpenMP's reduction operation).
 
+## MPI
