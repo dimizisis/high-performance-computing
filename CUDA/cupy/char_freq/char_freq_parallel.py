@@ -92,7 +92,7 @@ def load_c_code():
     return f'extern "C" {f.read()}'
 
 if __name__ == '__main__':
-    import os
+
     # check arguments, if file name is given return it
     filename = check_args()
 
@@ -129,8 +129,10 @@ if __name__ == '__main__':
     # done
     end = time.time()
 
-    # print char frequency and time of execution
+    # print char frequency
     [print(f'{j+base} = {freq[j]}') for j in range(N)]
+
+    # print time of execution
     print(f'Time spent for counting: {end-start}')
 
     # close file

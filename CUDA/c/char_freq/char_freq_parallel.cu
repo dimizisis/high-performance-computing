@@ -28,9 +28,8 @@ void display_count(int *freq, int n);
  */
 
 int main(int argc, char *argv[]){	
+    
     int blocks;	
-    int num_threads;
-     
     float total_time, comp_time;
     cudaEvent_t total_start, total_stop, comp_start, comp_stop;
     cudaEventCreate(&total_start);
@@ -90,18 +89,13 @@ int main(int argc, char *argv[]){
     /*
     * Create sufficient blocks 
     */
-    blocks = (N + THREADS_PER_BLOCK - 1)/THREADS_PER_BLOCK;
-
-    /*
-    * Calculate number of threads
-    */
-    num_threads = blocks * THREADS_PER_BLOCK;
+    blocks = (file_size + THREADS_PER_BLOCK - 1)/THREADS_PER_BLOCK;
 
     cudaEventRecord(comp_start);
 	/*
     * Kernel call
     */ 
-	count_characters<<< blocks*2, N >>>(buff_dev, freq_dev, file_size);
+	count_characters<<< blocks, THREADS_PER_BLOCK >>>(buff_dev, freq_dev, file_size);
 
     cudaEventRecord(comp_stop);
     cudaEventSynchronize(comp_stop);

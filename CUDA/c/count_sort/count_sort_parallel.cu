@@ -15,17 +15,15 @@ __global__ void count_sort(int *a, int *s_a, int n) {
 	
     int index = threadIdx.x + blockIdx.x * blockDim.x;
     int total_threads = gridDim.x * blockDim.x;
+    int count = 0;
         
-    int i, j, count;
-    for (i = index; i < n; i+=total_threads) {
-        count = 0;
-        for (j = 0; j < n; ++j)
-            if (a[j] < a[i])
-                ++count;
-            else if (a[j] == a[i] && j < i)
-                ++count;
-        s_a[count] = a[i];
-    }
+    int j;
+    for (j = 0; j < n; ++j)
+        if (a[j] < a[index])
+            ++count;
+        else if (a[j] == a[index] && j < index)
+            ++count;
+    s_a[count] = a[index];
 
 }
 
@@ -37,9 +35,8 @@ void display_array(int *array, int n);
  */
 
 int main(int argc, char *argv[]){
+    
     int blocks;	
-    int num_threads;
-     
     float total_time, comp_time;
     cudaEvent_t total_start, total_stop, comp_start, comp_stop;
     cudaEventCreate(&total_start);
@@ -57,6 +54,7 @@ int main(int argc, char *argv[]){
 	 * Init array
 	 */
     rand_init_array(array, N, UPPER, LOWER);
+    display_array(array, N);
 
 	/*
 	 * Memory allocation on device
