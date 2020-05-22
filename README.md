@@ -55,7 +55,7 @@ g++ dda_seq.c -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -o dda
 dda
 ```
 
-###### Linux:
+###### Linux
 ```
 ./dda
 ```
@@ -70,7 +70,7 @@ g++ dda_parallel_midpoint.c -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -
 dda_p
 ```
 
-###### Linux:
+###### Linux
 ```
 ./dda_p
 ```
@@ -99,7 +99,7 @@ g++ chaos_seq.c -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -fopenmp -o c
 chaos
 ```
 
-###### Linux:
+###### Linux
 ```
 ./chaos
 ```
@@ -147,7 +147,7 @@ gcc -fopenmp char_freq_parallel_<method>.c -o char_freq_p
 char_freq_p
 ```
 
-###### Linux:
+###### Linux
 ```
 ./char_freq_p
 ```
@@ -172,7 +172,7 @@ gcc -fopenmp count_sort_parallel.c -o cs_p
 cs_p
 ```
 
-###### Linux:
+###### Linux
 ```
 ./cs_p
 ```
@@ -198,7 +198,7 @@ gcc -fopenmp insertion_sort_parallel.c -o is_p
 is_p
 ```
 
-###### Linux:
+###### Linux
 ```
 ./is_p
 ```
@@ -226,7 +226,7 @@ gcc -fopenmp epsilon_parallel.c -o epsilon_p
 epsilon_parallel
 ```
 
-###### Linux:
+###### Linux
 ```
 ./epsilon_parallel
 ```
@@ -254,7 +254,7 @@ gcc -fopenmp pi_parallel_array.c -o pi_parallel_array
 pi_parallel_array
 ```
 
-###### Linux:
+###### Linux
 ```
 ./pi_parallel_array
 ```
@@ -274,7 +274,7 @@ gcc -fopenmp pi_parallel_atomic.c -o pi_parallel_atomic
 pi_parallel_atomic
 ```
 
-###### Linux:
+###### Linux
 ```
 ./pi_parallel_atomic
 ```
@@ -294,7 +294,7 @@ gcc -fopenmp pi_parallel_critical.c -o pi_parallel_critical
 pi_parallel_critical
 ```
 
-###### Linux:
+###### Linux
 ```
 ./pi_parallel_critical
 ```
@@ -314,7 +314,7 @@ gcc -fopenmp pi_parallel_local.c -o pi_parallel_local
 pi_parallel_local
 ```
 
-###### Linux:
+###### Linux
 ```
 ./pi_parallel_local
 ```
@@ -334,7 +334,7 @@ gcc -fopenmp pi_parallel_reduction.c -o pi_parallel_reduction
 pi_parallel_reduction
 ```
 
-###### Linux:
+###### Linux
 ```
 ./pi_parallel_reduction
 ```
@@ -346,3 +346,35 @@ pi_parallel_reduction
 As we can observe, reduction works better compared to other methods (pi_parallel_local is reduction, pi_parallel_reduction uses OpenMP's reduction operation).
 
 ## MPI
+
+### C
+
+#### Character Frequency
+
+SPMD: Each thread takes a specific slice of the file of characters and stores the character frequency to local array (each process has its own frequency array). 
+
+Using the MPI_Reduce function (with MPI_SUM operation), all local frequency arrays sums to root's (process 0) total frequency array.
+
+```
+/* Make the reduce */
+MPI_Reduce(freq, total_freq, N, MPI_INT, MPI_SUM, ROOT, MPI_COMM_WORLD);
+```
+
+![alt text](https://mpitutorial.com/tutorials/mpi-reduce-and-allreduce/mpi_reduce_1.png "MPI_Reduce")
+
+Source: https://mpitutorial.com/tutorials/mpi-reduce-and-allreduce/
+
+##### Usage
+
+```
+mpicc char_freq_parallel_Reduce.c -o char_freq
+```
+
+```
+mpirun -np 4 char_freq // 4 cores
+```
+
+#### Execution Time
+
+![alt text](https://i.imgur.com/moj5i1c.png "CharFreq")
+
