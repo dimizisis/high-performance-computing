@@ -378,3 +378,36 @@ mpirun -np 4 char_freq // 4 cores
 
 ![alt text](https://i.imgur.com/moj5i1c.png "CharFreq")
 
+#### Count Sort (Enumeration Sort)
+
+##### Reduce
+
+SPMD: Each process is aware of the whole array and sorts a specific part of the array (start, stop). Using the MPI_Reduce function (with MPI_SUM operation), each process returns its results to sorted_array.
+
+###### Usage
+
+```
+mpicc count_sort_parallel_Reduce.c -o cs_r
+```
+
+```
+mpirun -np 4 cs_r // 4 cores
+```
+
+##### Locations
+
+Each process has a local array which contains indexes on where the ith element (i=0,1,...,N) should be put, in order the final array to be sorted. For example, if local_locations[2] == 0, then the element in position 2 of the initial array should be put in position zero.
+
+```
+count_sort_parallel_Locations.c -o cs_l
+```
+
+```
+mpirun -np 4 cs_l // 4 cores
+```
+
+#### Execution Time
+
+All tests with N = 400000.
+
+![alt text](https://i.imgur.com/l5K3pWW.png "Count_Sort_Reduce")
