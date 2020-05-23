@@ -349,7 +349,7 @@ As we can observe, reduction works better compared to other methods (pi_parallel
 
 ### C
 
-#### Character Frequency
+#### char_freq-mpi
 
 SPMD: Each thread takes a specific slice of the file of characters and stores the character frequency to local array (each process has its own frequency array). 
 
@@ -378,7 +378,7 @@ mpirun -np 4 char_freq // 4 cores
 
 ![alt text](https://i.imgur.com/moj5i1c.png "CharFreq")
 
-#### Count Sort (Enumeration Sort)
+#### count_sort-mpi
 
 ##### Reduce
 
