@@ -11,6 +11,8 @@ NUM_OF_ARGS = 2
 N = 128
 base = 0
 
+THREADS_PER_BLOCK = 512
+
 def check_args():
     '''
     Function:  check_args 
@@ -106,10 +108,10 @@ if __name__ == '__main__':
     print(f'File size is {file_size}\n')
 
     # convert buffer to ascii buffer (cupy array)
-    ascii_buff = cp.asarray([ord(char) for char in list(f.read(file_size))], dtype=cp.int32)
+    ascii_buff_gpu = cp.asarray([ord(char) for char in list(f.read(file_size))], dtype=cp.int32)
 
     # frequency vector init with zeros
-    freq = cp.zeros(N, dtype=cp.int32)
+    freq_gpu = cp.zeros(N, dtype=cp.int32)
 
     # load code from source file
     loaded_from_source = load_c_code()
@@ -122,15 +124,21 @@ if __name__ == '__main__':
 
     # start counting
     start = time.time()
+    
+    # Create sufficient blocks 
+    blocks = int((file_size + THREADS_PER_BLOCK - 1)/THREADS_PER_BLOCK)
 
     # count characters!
-    ker_count((N,), (1,), (ascii_buff, freq, file_size, base))
+    ker_count((blocks,), (THREADS_PER_BLOCK,), (ascii_buff_gpu, freq_gpu, file_size, base))
+
+    # copy frequency array to host
+    freq_cpu = freq_gpu.get()
 
     # done
     end = time.time()
 
     # print char frequency
-    [print(f'{j+base} = {freq[j]}') for j in range(N)]
+    [print(f'{j+base} = {freq_cpu[j]}') for j in range(N)]
 
     # print time of execution
     print(f'Time spent for counting: {end-start}')

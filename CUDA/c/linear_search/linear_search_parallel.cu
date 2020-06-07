@@ -1,120 +1,101 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
 #include <cuda.h>
+#include <assert.h>
 
-#define N 10
+#define N 10000000
 #define UPPER N*4
 #define LOWER 1
 #define THREADS_PER_BLOCK 512
 
-/*
- * Kernel function
- */
-__global__ void count_sort(int *a, int *s_a, int n) {
-	
-    int index = threadIdx.x + blockIdx.x * blockDim.x;
-    int total_threads = gridDim.x * blockDim.x;
-    int count = 0;
-        
-    int j;
-    for (j = 0; j < n; ++j)
-        if (a[j] < a[index])
-            ++count;
-        else if (a[j] == a[index] && j < index)
-            ++count;
-    s_a[count] = a[index];
-
-}
-
 void rand_init_array(int *array, int n, int upper, int lower);
 void display_array(int *array, int n);
 
-/*
- * Main
- */
+__global__ void lsearch(int *a, int n, int x, int *index){
+    int i = threadIdx.x + blockIdx.x * blockDim.x;
+    if (i < n)
+        if (a[i] == x)
+            index[0] = i;
+}
 
-int main(int argc, char *argv[]){
-    
+int main(void) {
+
+    /* Allocation & Initialization */
+    int *array = (int*) malloc(N*sizeof(int));
+    rand_init_array(array, N, UPPER, LOWER);
+    // display_array(array, N);
+    int *index = (int *)malloc(1*sizeof(int));
+    index[0] = -1;
+    int key = 2;
+    /* --------------------------- */
+
     int blocks;	
     float total_time, comp_time;
     cudaEvent_t total_start, total_stop, comp_start, comp_stop;
     cudaEventCreate(&total_start);
   	cudaEventCreate(&total_stop);
   	cudaEventCreate(&comp_start);
-  	cudaEventCreate(&comp_stop);
-
-	/*
-	 * Memory allocation on host 
-	 */
-    int *array = (int *)malloc(N*sizeof(int));
-    int *sorted_array = (int *)malloc(N*sizeof(int));
+    cudaEventCreate(&comp_stop);
 
     /*
-	 * Init array
-	 */
-    rand_init_array(array, N, UPPER, LOWER);
-    display_array(array, N);
-
-	/*
 	 * Memory allocation on device
 	 */
-	int *array_dev, *sorted_dev;
+    int *array_dev, *index_dev;
     cudaMalloc((void **)&array_dev, N*sizeof(int));
-    cudaMalloc((void **)&sorted_dev, N*sizeof(int));
-	
+    cudaMalloc((void **)&index_dev, 1*sizeof(int));
+
     cudaEventRecord(total_start);
 
     /*
 	 * Copy array from host memory to device memory
 	 */
-	cudaMemcpy(array_dev, array, N*sizeof(int), cudaMemcpyHostToDevice);
-	
+    cudaMemcpy(array_dev, array, N*sizeof(int), cudaMemcpyHostToDevice);
+    cudaMemcpy(index_dev, index, 1*sizeof(int), cudaMemcpyHostToDevice);
+    
     /*
-    * Create sufficient blocks 
-    */
+     * Create sufficient blocks 
+     */
     blocks = (N + THREADS_PER_BLOCK - 1)/THREADS_PER_BLOCK;
 
     cudaEventRecord(comp_start);
-    
-	/*
-    * Kernel call
-    */ 
-	count_sort<<< blocks, THREADS_PER_BLOCK >>>(array_dev, sorted_dev, N);
+
+    /*
+     * Kernel call
+     */ 
+    lsearch<<< blocks, THREADS_PER_BLOCK >>>(array_dev, N, key, index_dev);
 
     cudaEventRecord(comp_stop);
     cudaEventSynchronize(comp_stop);
     cudaEventElapsedTime(&comp_time, comp_start, comp_stop);
 
-	/*
+    /*
 	 * Copy c from host device memory to host memory
 	 */
-	cudaMemcpy(sorted_array, sorted_dev, N*sizeof(int), cudaMemcpyDeviceToHost);
-	
+    cudaMemcpy(index, index_dev, 1*sizeof(int), cudaMemcpyDeviceToHost);
+    
     cudaEventRecord(total_stop);
     cudaEventSynchronize(total_stop);
     cudaEventElapsedTime(&total_time, total_start, total_stop);
 
-	/*
+    /*
 	 * Free memory on device
 	 */
 	cudaFree(array_dev);
-    cudaFree(sorted_dev);
-    cudaEventDestroy(comp_start);
-    cudaEventDestroy(comp_stop);
-    cudaEventDestroy(total_start);
-    cudaEventDestroy(total_stop);
-       
+    cudaFree(index_dev);
+
     /*
-    * GPU timing
-    */
+     * GPU timing
+     */
     printf("N: %d, blocks: %d, total_threads: %d\n", N, blocks, THREADS_PER_BLOCK*blocks);
     printf("Total time (ms): %f\n", total_time);
     printf("Kernel time (ms): %f\n", comp_time);
     printf("Data transfer time (ms): %f\n", total_time-comp_time);
-    display_array(sorted_array, N);
-        
-	return 0;
+    printf("\nNum %d is at index %d\n", key, index[0]);
+    return 0;
+}
+
+int cmpfunc(const void * a, const void * b){
+	// Compare function used by qsort
+	return ( *(int*)a - *(int*)b );
 }
 
 /*
@@ -152,4 +133,3 @@ void display_array(int *array, int n){
         (void) printf("%d ", array[i]);
     (void) printf("]\n\n");
 }
-

@@ -1,12 +1,13 @@
 
 import cupy as cp
+import numpy as np
 import time
 import os
 
 # constants
 N = 10
 LOWER = 0
-UPPER = N*4
+UPPER = N
 
 THREADS_PER_BLOCK = 512
 BLOCKS = int((N + THREADS_PER_BLOCK - 1)/THREADS_PER_BLOCK)
@@ -16,7 +17,7 @@ BLOCKS = int((N + THREADS_PER_BLOCK - 1)/THREADS_PER_BLOCK)
 CURR_DIR = os.path.dirname(os.path.realpath(__file__))
 
 # open file containing C code
-f = open(f'{CURR_DIR}\count_sort.cu', 'rt')
+f = open(f'{CURR_DIR}/search.cu', 'rt')
 
 # load code from source file
 loaded_from_source = f'extern "C" {f.read()}'
@@ -25,31 +26,34 @@ loaded_from_source = f'extern "C" {f.read()}'
 module = cp.RawModule(code=loaded_from_source)
 
 # load kernel
-ker_sort = module.get_function('count_sort')
+ker_search = module.get_function('lsearch')
 
 # initialize array (random)
-array_gpu = cp.random.randint(LOWER, high=UPPER, size=N, dtype=cp.int32)
+array_gpu = cp.random.randint(low=LOWER, high=UPPER, size=N, dtype=cp.int32)
 
 # print initial array
 print(array_gpu)
 
-# create cupy array (will be the sorted one)
-sorted_array_gpu = cp.empty(N, dtype=cp.int32)
+# number to search (key)
+key = 2
+
+# index of number
+index_gpu = cp.array([-1], dtype=cp.int32)
 
 # start timer
 begin = time.time()
 
-# perform sort!
-ker_sort((BLOCKS,), (THREADS_PER_BLOCK,), (array_gpu, sorted_array_gpu, N))
+# perform search!
+ker_search((BLOCKS,), (THREADS_PER_BLOCK,), (array_gpu, N, key, index_gpu))
 
-# move sorted array to host
-sorted_array_cpu = sorted_array_gpu.get()
+# move index to host
+index_cpu = index_gpu.get()[0]
 
 # stop timer
 end = time.time()
 
-# print sorted array
-print(sorted_array_cpu)
+# print index
+print(f'Num {key} is at index {index_cpu}')
 
 # print time elapsed
 print(f'Time elapsed {end-begin}')
