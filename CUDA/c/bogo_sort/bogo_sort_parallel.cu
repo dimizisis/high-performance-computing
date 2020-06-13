@@ -3,29 +3,30 @@
 #include <cuda.h>
 #include <curand.h>
 #include <curand_kernel.h>
-#include <assert.h>
 #include <math.h>
 
 #define N 6
 #define UPPER 1
-#define LOWER N*3
+#define LOWER N*4
 #define THREADS_PER_BLOCK 1
-#define BLOCKS 1
+#define BLOCKS 1 //(N + THREADS_PER_BLOCK - 1)/THREADS_PER_BLOCK
 
 void rand_init_array(int *a, int n, int upper, int lower);
 void display_array(int *a, int n);
 
 __global__ void setup_kernel(curandState *state){
     int idx = threadIdx.x + blockDim.x * blockIdx.x;
-    curand_init(1234, idx, 0, &state[idx]);
+    curand_init(clock64(), idx, 0, &state[idx]);
 }
 
-__device__ int random(curandState *state, unsigned int n){
-    int idx = threadIdx.x + blockDim.x * blockIdx.x;
-    float myrandf = curand_uniform(&(state[idx]));
-    myrandf *= ((n-1) + 0.999999);
-    int myrand = (int)truncf(myrandf);
-    return myrand;
+__device__ float getnextrand(curandState *state){
+
+    return (float)(curand_uniform(state));
+}
+  
+__device__ int getnextrandscaled(curandState *state, int scale){
+  
+    return (int) scale * getnextrand(state);
 }
 
 /*
@@ -39,34 +40,12 @@ __device__ int random(curandState *state, unsigned int n){
  *
  */
 
- __device__ void swap_random(int *a, int idx, int n, curandState *state){
-    int t1, t2, r;
-    do
-        r = random(state, n%idx);
-    while(r == idx);
-    t1 = a[idx];
-    t2 = a[r];
-    atomicExch(&(a[idx]), t2);
-    atomicExch(&(a[r]), t1);
-    // a[idx] = a[r];
-    // a[r] = t;
-    // printf("idx: %d, a[%d]: %d | r: %d, a[%d]: %d\n", idx, idx, a[idx], r, r, a[r]);
-    __threadfence();
-}
+__device__ void swap_random(int *a, curandState *state){
+    int idx = threadIdx.x + blockDim.x * blockIdx.x;
+    int r = getnextrandscaled(state, N);
+    a[r] = atomicExch(&(a[idx]), a[r]);
+    printf("%d ", r);
 
-/*
- * Function:  shuffle 
- * --------------------
- * Randomizes elements of array
- *
- *  a: the array (integer)
- *  n: number of elements in the array
- *
- */
-
-__device__ void shuffle(int *a, int n, curandState *state){
-    int index = threadIdx.x + blockDim.x * blockIdx.x;
-    swap_random(a, index, n, state);
 }
 
 /*
@@ -81,7 +60,7 @@ __device__ void shuffle(int *a, int n, curandState *state){
 
 __device__ int is_sorted(int *a, int n){
     while ( --n >= 1 )
-        if ( a[n] < a[n-1] ) return 0;
+        if ( a[n] < a[n-1] || a[n] == a[n-1]) return 0;
     return 1;
 }
 
@@ -94,11 +73,12 @@ __device__ int is_sorted(int *a, int n){
  *  n: number of elements in the array
  *
  */
- __global__ void bogo_sort(int *a, int n, volatile int *found, curandState *state){
-    int index = threadIdx.x + blockDim.x * blockIdx.x;
-    if (index < n){
+
+__global__ void bogo_sort(int *a, int n, int *found, curandState *state){
+    int idx = threadIdx.x + blockDim.x * blockIdx.x;
+    if (idx < n){
         while(!found[0]){
-            shuffle(a, n, state);
+            swap_random(a, state);
             found[0] = is_sorted(a, n);
         }
     }
@@ -107,7 +87,8 @@ __device__ int is_sorted(int *a, int n){
 /*
  * Main
  */
- int main(int argc, char *argv[]){
+
+int main(int argc, char *argv[]){
     
     float total_time, comp_time;
     cudaEvent_t total_start, total_stop, comp_start, comp_stop;
@@ -115,6 +96,14 @@ __device__ int is_sorted(int *a, int n){
   	cudaEventCreate(&total_stop);
   	cudaEventCreate(&comp_start);
     cudaEventCreate(&comp_stop);
+
+    /* Some initializations & allocations to generate random number within kernel */
+
+    curandState *d_state;
+    cudaMalloc(&d_state, sizeof(curandState));
+    
+    setup_kernel<<< BLOCKS, THREADS_PER_BLOCK >>>(d_state);
+    /* -------------------------------------------------------------------------- */
 
     /*
 	 * Memory allocation on host 
@@ -141,14 +130,9 @@ __device__ int is_sorted(int *a, int n){
      * Copy array from host memory to device memory
      */
     cudaMemcpy(array_dev, array, N*sizeof(int), cudaMemcpyHostToDevice);
-    cudaMemcpy(found_dev, found, N*sizeof(int), cudaMemcpyHostToDevice);
+    cudaMemcpy(found_dev, found, 1*sizeof(int), cudaMemcpyHostToDevice);
 
     cudaEventRecord(comp_start);
-
-    curandState *d_state;
-    cudaMalloc(&d_state, sizeof(curandState));
-
-    setup_kernel<<< BLOCKS, THREADS_PER_BLOCK >>>(d_state);
 
     /*
      * Kernel call
