@@ -22,7 +22,7 @@ f = open(f'{CURR_DIR}\count_sort.cu', 'rt')
 loaded_from_source = f'extern "C" {f.read()}'
 
 # load c code
-module = cp.RawModule(code=loaded_from_source)
+module = cp.RawModule(code=loaded_from_source, backend='nvcc')
 
 # load kernel
 ker_sort = module.get_function('count_sort')

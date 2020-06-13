@@ -1,6 +1,5 @@
 
 import cupy as cp
-import numpy as np
 import time
 import os
 
@@ -23,7 +22,7 @@ f = open(f'{CURR_DIR}/search.cu', 'rt')
 loaded_from_source = f'extern "C" {f.read()}'
 
 # load c code
-module = cp.RawModule(code=loaded_from_source)
+module = cp.RawModule(code=loaded_from_source, backend='nvcc')
 
 # load kernel
 ker_search = module.get_function('lsearch')

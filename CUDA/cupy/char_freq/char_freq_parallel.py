@@ -1,9 +1,6 @@
 
 import sys
 from os import SEEK_END, SEEK_SET
-import numpy as np
-import sys
-from os import SEEK_END
 import cupy as cp
 import time
 
@@ -117,7 +114,7 @@ if __name__ == '__main__':
     loaded_from_source = load_c_code()
 
     # load c code
-    module = cp.RawModule(code=loaded_from_source)
+    module = cp.RawModule(code=loaded_from_source, backend='nvcc')
 
     # load kernel
     ker_count = module.get_function('count_characters')

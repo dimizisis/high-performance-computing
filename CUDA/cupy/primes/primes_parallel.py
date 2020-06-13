@@ -1,10 +1,10 @@
+
 import cupy as cp
 import time
 import os
 
 # constants
 N = 10000
-
 
 THREADS_PER_BLOCK = 512
 BLOCKS = int((N + THREADS_PER_BLOCK - 1)/THREADS_PER_BLOCK)
@@ -20,7 +20,7 @@ f = open(f'{CURR_DIR}\primes.cu', 'rt')
 loaded_from_source = f'extern "C" {f.read()}'
 
 # load c code
-module = cp.RawModule(code=loaded_from_source)
+module = cp.RawModule(code=loaded_from_source, backend='nvcc')
 
 # load kernel
 ker_primes = module.get_function('find_primes')
