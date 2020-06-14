@@ -4,25 +4,7 @@
 #define THREADS_PER_BLOCK 512
 #define BLOCKS (N + THREADS_PER_BLOCK - 1)/THREADS_PER_BLOCK
 
-__global__ void find_primes(int *a, int n) { 
-
-    int idx = threadIdx.x + blockIdx.x * blockDim.x;
-    // int total_threads = gridDim.x * blockDim.x;
-    int is_prime = 1;
-
-    if (idx > 1 && idx < n){
-        int j;
-        for (j=2; j<idx/2+1; ++j){
-            if (!(idx % j) && j != idx){
-                is_prime = 0;
-                break;
-            }
-        }
-        if (is_prime) a[idx] = 1;
-        is_prime = 1;
-    }
-
-}
+__global__ void find_primes(int *a, int n);
 
 int main(int argc, char *argv[]) {
   
@@ -108,4 +90,34 @@ int main(int argc, char *argv[]) {
     (void) printf("]\n\n");
 
     return 0;
+}
+
+/*
+ * Function:  find_primes 
+ * --------------------
+ * Finds all prime numbers in specific range
+ *
+ *  a: pointer of the array that will contain ones and zeros (1: is prime, 0: not a prime)
+ *  n: number of elements in the array (the range)
+ *  x: the key value we are searching
+ *
+ */
+
+__global__ void find_primes(int *a, int n){ 
+
+    int idx = threadIdx.x + blockIdx.x * blockDim.x;
+    int is_prime = 1;
+
+    if (idx > 1 && idx < n){
+        int j;
+        for (j=2; j<idx/2+1; ++j){
+            if (!(idx % j) && j != idx){
+                is_prime = 0;
+                break;
+            }
+        }
+        if (is_prime) a[idx] = 1;
+        is_prime = 1;
+    }
+
 }

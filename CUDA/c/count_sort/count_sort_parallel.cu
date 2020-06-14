@@ -8,24 +8,7 @@
 #define LOWER 1
 #define THREADS_PER_BLOCK 512
 
-/*
- * Kernel function
- */
-__global__ void count_sort(int *a, int *s_a, int n) {
-	
-    int index = threadIdx.x + blockIdx.x * blockDim.x;
-    int total_threads = gridDim.x * blockDim.x;
-    int count = 0;
-        
-    int j;
-    for (j = 0; j < n; ++j)
-        if (a[j] < a[index])
-            ++count;
-        else if (a[j] == a[index] && j < index)
-            ++count;
-    s_a[count] = a[index];
-
-}
+__global__ void count_sort(int *a, int *s_a, int n);
 
 void rand_init_array(int *array, int n, int upper, int lower);
 void display_array(int *array, int n);
@@ -115,6 +98,32 @@ int main(int argc, char *argv[]){
     display_array(sorted_array, N);
         
 	return 0;
+}
+
+/*
+ * Function:  count_sort 
+ * --------------------
+ * Performs count sort (enumeration sort) algorithm in parallel
+ *
+ *  a: pointer of initial array
+ *  s_a: pointer of sorted array
+ *  n: number of elements in the array
+ *
+ */
+
+__global__ void count_sort(int *a, int *s_a, int n){
+	
+    int index = threadIdx.x + blockIdx.x * blockDim.x;
+    int count = 0;
+    int j;
+
+    for (j = 0; j < n; ++j)
+        if (a[j] < a[index])
+            ++count;
+        else if (a[j] == a[index] && j < index)
+            ++count;
+    s_a[count] = a[index];
+
 }
 
 /*

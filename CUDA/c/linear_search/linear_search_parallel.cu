@@ -7,15 +7,10 @@
 #define LOWER 1
 #define THREADS_PER_BLOCK 512
 
+__global__ void lsearch(int *a, int n, int x, int *index);
+
 void rand_init_array(int *array, int n, int upper, int lower);
 void display_array(int *array, int n);
-
-__global__ void lsearch(int *a, int n, int x, int *index){
-    int i = threadIdx.x + blockIdx.x * blockDim.x;
-    if (i < n)
-        if (a[i] == x)
-            index[0] = i;
-}
 
 int main(void) {
 
@@ -93,9 +88,24 @@ int main(void) {
     return 0;
 }
 
-int cmpfunc(const void * a, const void * b){
-	// Compare function used by qsort
-	return ( *(int*)a - *(int*)b );
+/*
+ * Function:  lsearch 
+ * --------------------
+ * Performs search in parallel
+ *
+ *  a: pointer of the array we are seraching on
+ *  n: number of elements in the array
+ *  x: the key value we are searching
+ *  index: pointer to one-element array that will contain the index of the key in the array
+ *         or -1 if there isn't any element with key's value in the array (a)
+ *
+ */
+
+ __global__ void lsearch(int *a, int n, int x, int *index){
+    int i = threadIdx.x + blockIdx.x * blockDim.x;
+    if (i < n)
+        if (a[i] == x)
+            index[0] = i;
 }
 
 /*

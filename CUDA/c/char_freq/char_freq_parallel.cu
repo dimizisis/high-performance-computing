@@ -7,19 +7,7 @@
 #define base 0
 #define THREADS_PER_BLOCK 512
 
-/*
- * Kernel function
- */
-__global__ void count_characters(char *buffer, int *freq, long file_size) {
-	
-    int index = threadIdx.x + blockIdx.x * blockDim.x;     
-    int total_threads = gridDim.x * blockDim.x;
-    
-    long i;
-    for (i=index; i<file_size; i+=total_threads)
-        atomicAdd(&(freq[buffer[i] - base]), 1);
-        
-}
+__global__ void count_characters(char *buffer, int *freq, long file_size);
 
 void display_count(int *freq, int n);
 
@@ -134,6 +122,37 @@ int main(int argc, char *argv[]){
         
 	return 0;
 }
+
+/*
+ * Function:  count_characters 
+ * --------------------
+ * Counts the frequency of each character (atomic operation, freq array)
+ *
+ *  buffer: pointer to char array that contains the txt file
+ *  freq: pointer to int array that will contain the frequency of each character
+ *  file_size: the size of the file (long number)
+ *
+ */
+__global__ void count_characters(char *buffer, int *freq, long file_size){
+	
+    int index = threadIdx.x + blockIdx.x * blockDim.x;     
+    int total_threads = gridDim.x * blockDim.x;
+    
+    long i;
+    for (i=index; i<file_size; i+=total_threads)
+        atomicAdd(&(freq[buffer[i] - base]), 1);
+        
+}
+
+/*
+ * Function:  display_count 
+ * --------------------
+ * Displays characters (as ASCII) with their frequency
+ *
+ *  freq: pointer to int array that will contain the frequency of each character
+ *  n: 128 (ASCII)
+ *
+ */
 
 void display_count(int *freq, int n){
 	int j;

@@ -4,37 +4,9 @@
 #include <cuda.h>
 
 #define THREADS_PER_BLOCK 512
- 
-/* returns 0 if no match, 1 if matched, -1 if matched and at end */
-__device__ int s_cmp(const char *s1, const char *s2){
-    char c1 = 0, c2 = 0;
-    while (c1 == c2) {
-            c1 = *(s1++);
-            if ('\0' == (c2 = *(s2++)))
-                    return c1 == '\0' ? -1 : 1;
-    }
-    return 0;
-}
 
-__global__ void s_match(const char *s1, const char *s2){
-    int idx = threadIdx.x + blockIdx.x * blockDim.x;
-    // int total_threads = gridDim.x * blockDim.x;
- 
-    if (s1[idx] != '\0') {
-            switch (s_cmp(s1 + idx, s2)) {
-                case -1:
-                {
-                        printf("matched: pos %d (at end)\n", idx);
-                        return;
-                }
-                case 1:
-                {
-                        printf("matched: pos %d\n", idx);
-                        break;
-                }
-            }
-    }
-}
+__global__ void s_match(const char *s1, const char *s2);
+__device__ int s_cmp(const char *s1, const char *s2);
  
 int main(int argc, char *argv[]){
 
@@ -97,7 +69,7 @@ int main(int argc, char *argv[]){
     cudaEventRecord(comp_start);
 
     /*
-    * Create blocks
+    * Create sufficient blocks
     */
     int blocks = (s1_len+s2_len + THREADS_PER_BLOCK - 1)/THREADS_PER_BLOCK;
 
@@ -139,4 +111,55 @@ int main(int argc, char *argv[]){
     printf("Data transfer time (ms): %f\n", total_time-comp_time);
     
     return 0;
+}
+
+/*
+ * Function:  s_cmp 
+ * --------------------
+ * Compares the characters of s1 and s2 (until no match is found)
+ *
+ *  s1: pointer to char array (string 1)
+ *  s2: pointer to char array (string 2)
+ *
+ */
+
+/* returns 0 if no match, 1 if matched, -1 if matched and at end */
+__device__ int s_cmp(const char *s1, const char *s2){
+    char c1 = 0, c2 = 0;
+    while (c1 == c2) {
+            c1 = *(s1++);
+            if ('\0' == (c2 = *(s2++)))
+                    return c1 == '\0' ? -1 : 1;
+    }
+    return 0;
+}
+
+/*
+ * Function:  s_match 
+ * --------------------
+ * Performs string matching (between two strings)
+ *
+ *  s1: pointer to char array (string 1)
+ *  s2: pointer to char array (string 2)
+ *
+ */
+
+__global__ void s_match(const char *s1, const char *s2){
+    
+    int idx = threadIdx.x + blockIdx.x * blockDim.x;
+ 
+    if (s1[idx] != '\0') {
+            switch (s_cmp(s1 + idx, s2)) {
+                case -1:
+                {
+                        printf("matched: pos %d (at end)\n", idx);
+                        return;
+                }
+                case 1:
+                {
+                        printf("matched: pos %d\n", idx);
+                        break;
+                }
+            }
+    }
 }

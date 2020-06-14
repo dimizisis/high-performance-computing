@@ -7,18 +7,7 @@
 #define base 0
 #define THREADS_PER_BLOCK 512
 
-/*
- * Kernel function
- */
-__global__ void count_characters(char *buffer, int *freq, long file_size, int total_threads) {
-	
-    int index = threadIdx.x + blockIdx.x * blockDim.x;     
-    
-    long i;
-    for (i=index; i<file_size; i+=total_threads)
-        atomicAdd(&(freq[buffer[i] - base]), 1);
-        
-}
+__global__ void count_characters(char *buffer, int *freq, long file_size, int total_threads);
 
 void display_count(int *freq, int n);
 
@@ -138,6 +127,28 @@ int main(int argc, char *argv[]){
     printf("Data transfer time (ms): %f\n", total_time-comp_time);    
         
 	return 0;
+}
+
+/*
+ * Function:  count_characters 
+ * --------------------
+ * Counts the frequency of each character (atomic operation, freq array)
+ *
+ *  buffer: pointer to char array that contains the txt file
+ *  freq: pointer to int array that will contain the frequency of each character
+ *  file_size: the size of the file (long number)
+ *  total_threads: calculated total threads (int)
+ *
+ */
+
+__global__ void count_characters(char *buffer, int *freq, long file_size, int total_threads){
+	
+    int index = threadIdx.x + blockIdx.x * blockDim.x;     
+    
+    long i;
+    for (i=index; i<file_size; i+=total_threads)
+        atomicAdd(&(freq[buffer[i] - base]), 1);
+        
 }
 
 void display_count(int *freq, int n){
