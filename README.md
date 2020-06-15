@@ -17,14 +17,23 @@ University projects using OpenMP, MPI (C & Python), Cuda
       * [Character Frequency](#char_freq-mpi)
       * [Count Sort (Enumeration Sort)](#count_sort-mpi)
       * [Insertion Sort](#insertion_sort-mpi)
-      * [Shell Sort](#insertion_sort)
+      * [Shell Sort](#shell_sort)
       * [Sieve of Eratosthenes](#sieve)
-   * [mpi4py (Python)](#mpi4py)
-     * [Character Frequency](#char_freq-mpi4py)
-     * [Count Sort (Enumeration Sort)](#count_sort-mpi4py)
-     * [Insertion Sort](#insertion_sort-mpi4py)
-     * [Shell Sort](#insertion_sort-mpi4py)
-     * [Sieve of Eratosthenes](#sieve)
+   * [mpi4py](#mpi4py)
+      * [Usage](#usage)
+   * [Cuda](#cuda)
+      * [Best Shuffle](#best_shuffle)
+      * [Character Frequency](#char_freq-cuda)
+      * [Count Sort](#count_sort-cuda)
+      * [Linear Search](#linear_search)
+      * [Primes](#primes) 
+      * [String Matching](#string_matching)
+   * [CuPy](#cuda)
+      * [Best Shuffle](#best_shuffle-cupy)
+      * [Character Frequency](#char_freq-cupy)
+      * [Count Sort](#count_sort-cupy)
+      * [Linear Search](#linear_search-cupy)
+      * [Primes](#primes-cupy)
 
 <!--te-->
 
@@ -56,7 +65,7 @@ dda
 ```
 
 ###### Linux
-```
+```shell
 ./dda
 ```
 
@@ -66,12 +75,12 @@ g++ dda_parallel_midpoint.c -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -
 ```
 
 ###### Windows
-```
+```cmd
 dda_p
 ```
 
 ###### Linux
-```
+```shell
 ./dda_p
 ```
 
@@ -95,12 +104,12 @@ g++ chaos_seq.c -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -fopenmp -o c
 ```
 
 ###### Windows
-```
+```cmd
 chaos
 ```
 
 ###### Linux
-```
+```shell
 ./chaos
 ```
 
@@ -110,12 +119,12 @@ g++ chaos_parallel.c -lbgi -lgdi32 -lcomdlg32 -luuid -loleaut32 -lole32 -fopenmp
 ```
 
 ###### Windows
-```
+```cmd
 chaos_p
 ```
 
 ###### Linux:
-```
+```shell
 ./chaos_p
 ```
 
@@ -143,12 +152,12 @@ gcc -fopenmp char_freq_parallel_<method>.c -o char_freq_p
 ```
 
 ###### Windows
-```
+```cmd
 char_freq_p
 ```
 
 ###### Linux
-```
+```shell
 ./char_freq_p
 ```
 
@@ -168,12 +177,12 @@ gcc -fopenmp count_sort_parallel.c -o cs_p
 ```
 
 ###### Windows
-```
+```cmd
 cs_p
 ```
 
 ###### Linux
-```
+```shell
 ./cs_p
 ```
 
@@ -194,12 +203,12 @@ gcc -fopenmp insertion_sort_parallel.c -o is_p
 ```
 
 ###### Windows
-```
+```cmd
 is_p
 ```
 
 ###### Linux
-```
+```shell
 ./is_p
 ```
 
@@ -222,12 +231,12 @@ gcc -fopenmp epsilon_parallel.c -o epsilon_p
 ```
 
 ###### Windows
-```
+```cmd
 epsilon_parallel
 ```
 
 ###### Linux
-```
+```shell
 ./epsilon_parallel
 ```
 
@@ -250,12 +259,12 @@ gcc -fopenmp pi_parallel_array.c -o pi_parallel_array
 ```
 
 ###### Windows
-```
+```cmd
 pi_parallel_array
 ```
 
 ###### Linux
-```
+```shell
 ./pi_parallel_array
 ```
 
@@ -270,12 +279,12 @@ gcc -fopenmp pi_parallel_atomic.c -o pi_parallel_atomic
 ```
 
 ###### Windows
-```
+```cmd
 pi_parallel_atomic
 ```
 
 ###### Linux
-```
+```shell
 ./pi_parallel_atomic
 ```
 
@@ -290,12 +299,12 @@ gcc -fopenmp pi_parallel_critical.c -o pi_parallel_critical
 ```
 
 ###### Windows
-```
+```cmd
 pi_parallel_critical
 ```
 
 ###### Linux
-```
+```shell
 ./pi_parallel_critical
 ```
 
@@ -310,12 +319,12 @@ gcc -fopenmp pi_parallel_local.c -o pi_parallel_local
 ```
 
 ###### Windows
-```
+```cmd
 pi_parallel_local
 ```
 
 ###### Linux
-```
+```shell
 ./pi_parallel_local
 ```
 
@@ -330,12 +339,12 @@ gcc -fopenmp pi_parallel_reduction.c -o pi_parallel_reduction
 ```
 
 ###### Windows
-```
+```cmd
 pi_parallel_reduction
 ```
 
 ###### Linux
-```
+```shell
 ./pi_parallel_reduction
 ```
 
@@ -355,7 +364,7 @@ SPMD: Each thread takes a specific slice of the file of characters and stores th
 
 Using the MPI_Reduce function (with MPI_SUM operation), all local frequency arrays sums to root's (process 0) total frequency array.
 
-```
+```c
 /* Make the reduce */
 MPI_Reduce(freq, total_freq, N, MPI_INT, MPI_SUM, ROOT, MPI_COMM_WORLD);
 ```
@@ -366,11 +375,11 @@ Source: https://mpitutorial.com/tutorials/mpi-reduce-and-allreduce/
 
 ##### Usage
 
-```
+```shell
 mpicc char_freq_parallel_Reduce.c -o char_freq
 ```
 
-```
+```shell
 mpirun -np 4 char_freq // 4 cores
 ```
 
@@ -386,11 +395,11 @@ SPMD: Each process is aware of the whole array and sorts a specific part of the 
 
 ###### Usage
 
-```
+```shell
 mpicc count_sort_parallel_Reduce.c -o cs_r
 ```
 
-```
+```shell
 mpirun -np 4 cs_r // 4 cores
 ```
 
@@ -398,11 +407,11 @@ mpirun -np 4 cs_r // 4 cores
 
 Each process has a local array which contains indexes on where the ith element (i=0,1,...,N) should be put, in order the final array to be sorted. For example, if local_locations[2] == 0, then the element in position 2 of the initial array should be put in position zero.
 
-```
+```shell
 mpicc count_sort_parallel_Locations.c -o cs_l
 ```
 
-```
+```shell
 mpirun -np 4 cs_l // 4 cores
 ```
 
@@ -412,16 +421,104 @@ All tests with N = 400000.
 
 ![alt text](https://i.imgur.com/l5K3pWW.png "Count_Sort_Reduce")
 
-### insertion_sort-mpi
+#### insertion_sort-mpi
 
 Parallelized insertion sort algorithm, using pipeline. N is standard (the number of processors).
 
 #### Usage
 
-```
+```shell
 mpicc insertion_sort_parallel_Pipeline.c -o is
 ```
 
-```
+```shell
 mpirun -np 4 is // 4 cores
+```
+
+#### shell_sort
+
+Parallelized shell sort algorithm, using the method of [Computer Science and Engineering, University at Buffalo](https://cse.buffalo.edu/faculty/miller/Courses/CSE633/prasad-salvi-Spring-2017-CSE633.pdf).
+
+![alt text](https://i.imgur.com/d4fkRBC.png)
+
+##### Usage
+
+```shell
+mpicc shell_sort_parallel_Reduce.c -o shell
+```
+
+```shell
+mpirun -np 4 shell // 4 cores
+```
+
+##### Execution Time
+
+![alt_text](https://i.imgur.com/qaDHqsp.png "Shell Sort")
+
+#### sieve
+
+Parallelized Sieve of Eratosthenes algorithm for finding prime numbers in specific range. Used Pipeline (2 alternatives, first is slow, for big N it actually never ends), global array (bitmap alike) and MPI_Scan directive.
+
+###### Pipeline (Alternative 1)
+
+##### Usage
+
+```shell
+mpicc sieve_parallel_Pipeline.c -o sieve_pipe
+```
+
+```shell
+mpirun -np 4 sieve_pipe // 4 cores
+```
+
+###### Pipeline (Alternative 2)
+
+##### Usage
+
+```shell
+mpicc sieve_parallel_Pipeline_2.c -o sieve_pipe_2
+```
+
+```shell
+mpirun -np 4 sieve_pipe_2 // 4 cores
+```
+
+###### Global Locations
+
+##### Usage
+
+```shell
+mpicc sieve_parallel_Locations_Global.c -o sieve_g
+```
+
+```shell
+mpirun -np 4 sieve_g // 4 cores
+```
+
+###### MPI Scan
+
+##### Usage
+
+```shell
+mpicc sieve_parallel_Locations_MPI_Scan.c -o sieve_scan
+```
+
+```shell
+mpirun -np 4 sieve_scan // 4 cores
+```
+
+##### Execution Time
+
+Tested for N = 200 (below).
+
+![alt_text](https://i.imgur.com/OfTqaGd.png "Sieve")
+
+### mpi4py
+
+All code from MPI is written in Python, too, using mpi4py lib.
+
+#### Usage For all programs:
+
+```shell
+python <name_of_py_file>
 ```
