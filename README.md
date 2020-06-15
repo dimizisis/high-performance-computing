@@ -517,7 +517,7 @@ Tested for N = 200 (below).
 
 All code from MPI is written in Python, too, using mpi4py lib.
 
-#### Usage For all programs:
+#### Usage
 
 ```shell
 python <name_of_py_file>
