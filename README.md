@@ -20,7 +20,7 @@ University projects using OpenMP, MPI (C & Python), Cuda
       * [Shell Sort](#shell_sort)
       * [Sieve of Eratosthenes](#sieve)
    * [mpi4py](#mpi4py)
-      * [Usage](#usage)
+      * [Usage](#mpi4py Usage)
    * [Cuda](#cuda)
       * [Best Shuffle](#best_shuffle)
       * [Character Frequency](#char_freq-cuda)
@@ -517,7 +517,7 @@ Tested for N = 200 (below).
 
 All code from MPI is written in Python, too, using mpi4py lib.
 
-#### Usage
+#### mpi4py Usage
 
 ```shell
 python <name_of_py_file>
