@@ -185,7 +185,7 @@ Tested both with random array, size 90000.
 
 ### insertion_sort
 
-Parallelized insertion sort algorithm (enumeration sort), using omp parallel and critical block (lock). Change the N macro inside the code. Sequential calculaton is even faster.
+Parallelized insertion sort algorithm, using omp parallel and critical block (lock). Change the N macro inside the code. Sequential calculaton is even faster.
 
 #### Usage
 
@@ -399,7 +399,7 @@ mpirun -np 4 cs_r // 4 cores
 Each process has a local array which contains indexes on where the ith element (i=0,1,...,N) should be put, in order the final array to be sorted. For example, if local_locations[2] == 0, then the element in position 2 of the initial array should be put in position zero.
 
 ```
-count_sort_parallel_Locations.c -o cs_l
+mpicc count_sort_parallel_Locations.c -o cs_l
 ```
 
 ```
@@ -411,3 +411,17 @@ mpirun -np 4 cs_l // 4 cores
 All tests with N = 400000.
 
 ![alt text](https://i.imgur.com/l5K3pWW.png "Count_Sort_Reduce")
+
+### insertion_sort-mpi
+
+Parallelized insertion sort algorithm, using pipeline. N is standard (the number of processors).
+
+#### Usage
+
+```
+mpicc insertion_sort_parallel_Pipeline.c -o is
+```
+
+```
+mpirun -np 4 is // 4 cores
+```
