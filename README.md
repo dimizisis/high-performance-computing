@@ -1,6 +1,6 @@
 # High Performance Computing
 
-University projects using OpenMP, MPI (C & Python), Cuda
+University projects using OpenMP, MPI (C & Python), CUDA
 
 ## Table of Contents
 <!--ts-->
@@ -40,7 +40,7 @@ University projects using OpenMP, MPI (C & Python), Cuda
 ## General Requirements
 
 * gcc & g++ compilers
-* MPI, Cuda libraries
+* MPI, CUDA libraries
 
 ## OpenMP
 
